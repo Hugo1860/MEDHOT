@@ -90,7 +90,11 @@ test("HTML and navigation share freshness; cookies do not personalize public res
   const html = await fetch(`${origin}/`);
   assert.equal(html.status, 200);
   assert.equal(html.headers.get("X-Accel-Expires"), `@${deadline}`);
-  assert.match(await html.text(), /精选/);
+  const document = await html.text();
+  assert.match(document, /精选/);
+  assert.match(document, /https:\/\/analytics\.aiyisheng\.com\//);
+  assert.match(document, /\['setSiteId', '13'\]/);
+  assert.match(document, /u\+'matomo\.js'/);
   // The api's deadline also fixes the result's own expiry, so reads seconds apart compare byte for byte.
   const plain = await fetch(`${origin}/_.data`);
   const signedIn = await fetch(`${origin}/_.data?_routes=root`, { headers: { cookie: "admin_session=private; reader=returning" } });

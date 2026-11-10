@@ -21,6 +21,20 @@ import { useHydratedFlag } from "./lib/hydration";
 import { titled } from "./lib/seo";
 import { webModules } from "./site-modules";
 
+const MATOMO_BOOT_SCRIPT = `
+var _paq = window._paq = window._paq || [];
+/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+  var u="https://analytics.aiyisheng.com/";
+  _paq.push(['setTrackerUrl', u+'matomo.php']);
+  _paq.push(['setSiteId', '13']);
+  if (/^(?:localhost|127(?:\.\d{1,3}){3}|\[::1\])$/.test(window.location.hostname)) return;
+  var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+  g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+})();`;
+
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: `/favicon.ico?v=${SITE.brandVersion}`, sizes: "any" },
   { rel: "icon", type: "image/png", href: `/icon.png?v=${SITE.brandVersion}` },
@@ -59,6 +73,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="apple-mobile-web-app-title" content={SITE.name} />
         <script dangerouslySetInnerHTML={{ __html: APPEARANCE_BOOT_SCRIPT }} />
         {webModules().map((m) => m.root?.bootScript && <script key={m.name} dangerouslySetInnerHTML={{ __html: m.root.bootScript }} />)}
+        <script dangerouslySetInnerHTML={{ __html: MATOMO_BOOT_SCRIPT }} />
         <Meta />
         <Links />
       </head>
