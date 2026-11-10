@@ -9,3 +9,7 @@ apps/web/.react-router
 .git
 .github
 *.log
+
+# macOS archive metadata is not source or a database migration.
+**/._*
+._*

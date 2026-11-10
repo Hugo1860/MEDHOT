@@ -1,370 +1,269 @@
 {
-  "$comment": "示范信源：首次启动时导入（scripts/seed.ts），已存在的不会被覆盖。之后在后台“信源”里新建、修改和暂停。字段说明见 docs/customize.md。",
+  "$comment": "医院医学前沿与科室学习情报站首批官方信源。首次启动时导入，已存在的不会被覆盖。所有来源默认只展示摘要和原文链接，不转载或分发全文。",
   "sources": [
     {
-      "id": "rss-openai-news",
-      "name": "OpenAI News",
+      "id": "rss-nejm-current",
+      "name": "NEJM · Current Issue",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://openai.com/news/rss.xml",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": "openai",
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "官方"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.nejm.org/action/showFeed?type=etoc&feed=rss&jc=nejm", "_aihot": { "initialBackfillLimit": 12 } },
+      "tier": "T1", "owner_entity_id": "nejm", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["研究", "综合医学", "官方期刊"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-google-deepmind",
-      "name": "Google DeepMind",
+      "id": "rss-jama-online-first",
+      "name": "JAMA · Online First",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://deepmind.google/blog/rss.xml",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": "google",
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "官方"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://jamanetwork.com/rss/site_3/onlineFirst_67.xml", "_aihot": { "initialBackfillLimit": 12 } },
+      "tier": "T1", "owner_entity_id": "jama", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["研究", "综合医学", "官方期刊"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-google-research",
-      "name": "Google Research",
+      "id": "rss-jama-network-open",
+      "name": "JAMA Network Open · New Online",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://research.google/blog/rss/",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": "google",
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "官方",
-        "研究"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://jamanetwork.com/rss/site_214/187.xml", "_aihot": { "initialBackfillLimit": 12 } },
+      "tier": "T1", "owner_entity_id": "jama", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["研究", "开放获取", "官方期刊"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-hugging-face",
-      "name": "Hugging Face Blog",
+      "id": "rss-bmj-recent",
+      "name": "The BMJ · Latest Articles",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://huggingface.co/blog/feed.xml",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": "hugging-face",
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "官方",
-        "开源"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.bmj.com/rss/recent.xml", "_aihot": { "initialBackfillLimit": 12 } },
+      "tier": "T1", "owner_entity_id": "bmj", "participation_mode": "editorial", "interval_minutes": 240,
+      "tags": ["研究", "临床教育", "综合医学", "官方期刊"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-microsoft-research",
-      "name": "Microsoft Research",
+      "id": "rss-nature-medicine",
+      "name": "Nature Medicine",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://www.microsoft.com/en-us/research/feed/",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": "microsoft",
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "官方",
-        "研究"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.nature.com/nm.rss?error=cookies_not_supported", "_aihot": { "initialBackfillLimit": 12 } },
+      "tier": "T1", "owner_entity_id": "nature", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["研究", "转化医学", "官方期刊"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-nvidia-blog",
-      "name": "NVIDIA Blog",
+      "id": "rss-bmj-quality-safety",
+      "name": "BMJ Quality & Safety",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://blogs.nvidia.com/feed/",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": "nvidia",
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "官方"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://qualitysafety.bmj.com/rss/current.xml", "_aihot": { "initialBackfillLimit": 12 } },
+      "tier": "T1", "owner_entity_id": "bmj", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["质量安全", "患者安全", "研究", "官方期刊"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-aws-ml",
-      "name": "AWS Machine Learning Blog",
+      "id": "rss-fda-medwatch",
+      "name": "FDA MedWatch Safety Alerts",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://aws.amazon.com/blogs/machine-learning/feed/",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "官方",
-        "教程"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.fda.gov/about-fda/contact-fda/stay-informed/rss-feeds/medwatch/rss.xml", "_aihot": { "initialBackfillLimit": 20 } },
+      "tier": "T1", "owner_entity_id": "fda", "participation_mode": "editorial", "interval_minutes": 120,
+      "tags": ["药械安全", "监管公告", "美国"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-github-ai",
-      "name": "GitHub Blog · AI & ML",
+      "id": "rss-ema-news",
+      "name": "EMA · News and Press Releases",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://github.blog/ai-and-ml/feed/",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "官方"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.ema.europa.eu/en/news.xml", "_aihot": { "initialBackfillLimit": 15 } },
+      "tier": "T1", "owner_entity_id": "ema", "participation_mode": "editorial", "interval_minutes": 180,
+      "tags": ["药械安全", "监管公告", "欧盟"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-mistral",
-      "name": "Mistral AI",
+      "id": "rss-ema-scientific-guidelines",
+      "name": "EMA · Scientific Guidelines",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://mistral.ai/news/rss",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "官方"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.ema.europa.eu/en/scientific-guidelines.xml", "_aihot": { "initialBackfillLimit": 15 } },
+      "tier": "T1", "owner_entity_id": "ema", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["指南", "药品监管", "欧盟"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-bair",
-      "name": "Berkeley AI Research",
+      "id": "rss-ema-new-human-medicines",
+      "name": "EMA · New Human Medicines",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://bair.berkeley.edu/blog/feed.xml",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T1",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 180,
-      "tags": [
-        "研究"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.ema.europa.eu/en/new-human-medicine-new.xml", "_aihot": { "initialBackfillLimit": 15 } },
+      "tier": "T1", "owner_entity_id": "ema", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["药品监管", "新药", "欧盟"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-the-verge-ai",
-      "name": "The Verge · AI",
+      "id": "rss-mhra-drug-safety",
+      "name": "MHRA Drug Safety Update",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T2",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 60,
-      "tags": [
-        "媒体"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.gov.uk/drug-safety-update.atom", "_aihot": { "initialBackfillLimit": 15 } },
+      "tier": "T1", "owner_entity_id": "mhra", "participation_mode": "editorial", "interval_minutes": 240,
+      "tags": ["药品安全", "监管公告", "英国"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-techcrunch-ai",
-      "name": "TechCrunch · AI",
+      "id": "rss-cdc-mmwr",
+      "name": "CDC MMWR",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://techcrunch.com/category/artificial-intelligence/feed/",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T2",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 60,
-      "tags": [
-        "媒体"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://tools.cdc.gov/api/v2/resources/media/342778.rss", "_aihot": { "initialBackfillLimit": 15 } },
+      "tier": "T1", "owner_entity_id": "cdc", "participation_mode": "editorial", "interval_minutes": 240,
+      "tags": ["公共卫生", "疾病监测", "美国"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-ars-technica-ai",
-      "name": "Ars Technica · AI",
+      "id": "rss-ecdc-epidemiological-updates",
+      "name": "ECDC · Epidemiological Updates",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://arstechnica.com/ai/feed/",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T2",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 60,
-      "tags": [
-        "媒体"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.ecdc.europa.eu/en/taxonomy/term/1310/feed", "_aihot": { "initialBackfillLimit": 15 } },
+      "tier": "T1", "owner_entity_id": "ecdc", "participation_mode": "editorial", "interval_minutes": 180,
+      "tags": ["公共卫生", "疫情更新", "欧盟"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-mit-tech-review-ai",
-      "name": "MIT Technology Review · AI",
+      "id": "rss-ecdc-threats-report",
+      "name": "ECDC · Communicable Disease Threats Report",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://www.technologyreview.com/topic/artificial-intelligence/feed",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T2",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "媒体"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.ecdc.europa.eu/en/taxonomy/term/1505/feed", "_aihot": { "initialBackfillLimit": 15 } },
+      "tier": "T1", "owner_entity_id": "ecdc", "participation_mode": "editorial", "interval_minutes": 180,
+      "tags": ["院感", "传染病", "风险监测", "欧盟"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-the-decoder",
-      "name": "The Decoder",
+      "id": "rss-ecdc-risk-assessments",
+      "name": "ECDC · Risk Assessments",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://the-decoder.com/feed/",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T2",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 60,
-      "tags": [
-        "媒体"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.ecdc.europa.eu/en/taxonomy/term/1295/feed", "_aihot": { "initialBackfillLimit": 15 } },
+      "tier": "T1", "owner_entity_id": "ecdc", "participation_mode": "editorial", "interval_minutes": 240,
+      "tags": ["公共卫生", "风险评估", "欧盟"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-simon-willison",
-      "name": "Simon Willison",
+      "id": "rss-ecdc-guidance",
+      "name": "ECDC · Guidance",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://simonwillison.net/atom/everything/",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T2",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 120,
-      "tags": [
-        "个人"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.ecdc.europa.eu/en/taxonomy/term/1301/feed", "_aihot": { "initialBackfillLimit": 15 } },
+      "tier": "T1", "owner_entity_id": "ecdc", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["指南", "院感", "公共卫生", "欧盟"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-import-ai",
-      "name": "Import AI",
+      "id": "rss-npj-digital-medicine",
+      "name": "npj Digital Medicine",
       "kind": "rss",
-      "config": {
-        "feedUrl": "https://importai.substack.com/feed",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
-      },
-      "tier": "T2",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 180,
-      "tags": [
-        "个人",
-        "周刊"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
+      "config": { "feedUrl": "https://www.nature.com/npjdigitalmed.rss", "_aihot": { "initialBackfillLimit": 12 } },
+      "tier": "T1", "owner_entity_id": "nature", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["医疗AI", "数字医学", "开放获取", "官方期刊"], "site_fulltext": false, "syndicate_fulltext": false
     },
     {
-      "id": "rss-latent-space",
-      "name": "Latent Space",
+      "id": "rss-cidrap",
+      "name": "CIDRAP News",
       "kind": "rss",
+      "config": { "feedUrl": "https://www.cidrap.umn.edu/rss.xml", "_aihot": { "initialBackfillLimit": 12 } },
+      "tier": "T2", "owner_entity_id": "cidrap", "participation_mode": "editorial", "interval_minutes": 180,
+      "tags": ["医学新闻", "感染", "院感", "抗菌药物管理"], "site_fulltext": false, "syndicate_fulltext": false
+    },
+    {
+      "id": "journal-chinese-nursing",
+      "name": "中华护理杂志 · 当期目录",
+      "kind": "web_list",
       "config": {
-        "feedUrl": "https://www.latent.space/feed",
-        "_aihot": {
-          "initialBackfillLimit": 8
-        }
+        "url": "https://zh.zhhlzzs.com/CN/0254-1769/home.shtml",
+        "parseMode": "html",
+        "itemSelector": ".noselectrow:has(a[href*='/CN/10.3761/'])",
+        "linkSelector": "a[href*='/CN/10.3761/']",
+        "titleSelector": "a[href*='/CN/10.3761/']",
+        "allowUrlPrefixes": ["https://zh.zhhlzzs.com/CN/10.3761/"],
+        "acceptLanguage": "zh-CN,zh;q=0.9",
+        "detail": { "maxFetches": 8, "publishedAtRegex": "<code>出版日期:</code>\\s*(\\d{4}-\\d{2}-\\d{2})", "publishedAtAuthoritative": true },
+        "_aihot": { "initialBackfillLimit": 8 }
       },
-      "tier": "T2",
-      "owner_entity_id": null,
-      "participation_mode": "editorial",
-      "interval_minutes": 180,
-      "tags": [
-        "个人"
-      ],
-      "site_fulltext": false,
-      "syndicate_fulltext": false
-    }
+      "tier": "T1", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["中文", "中国", "护理", "护理质控", "循证护理", "指南共识", "官方期刊"],
+      "site_fulltext": false, "syndicate_fulltext": false, "enabled": true
+    },
+    {
+      "id": "journal-critical-care-nursing",
+      "name": "中华急危重症护理杂志 · 当期目录",
+      "kind": "web_list",
+      "config": {
+        "url": "https://jwzz.zhhlzzs.com/CN/2096-7446/home.shtml",
+        "parseMode": "html",
+        "itemSelector": ".noselectrow:has(a[href*='/CN/10.3761/'])",
+        "linkSelector": "a[href*='/CN/10.3761/']",
+        "titleSelector": "a[href*='/CN/10.3761/']",
+        "allowUrlPrefixes": ["https://jwzz.zhhlzzs.com/CN/10.3761/"],
+        "acceptLanguage": "zh-CN,zh;q=0.9",
+        "detail": { "maxFetches": 8, "publishedAtRegex": "<code>出版日期:</code>\\s*(\\d{4}-\\d{2}-\\d{2})", "publishedAtAuthoritative": true },
+        "_aihot": { "initialBackfillLimit": 8 }
+      },
+      "tier": "T1", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["中文", "中国", "护理", "护理质控", "急诊", "重症", "患者安全", "官方期刊"],
+      "site_fulltext": false, "syndicate_fulltext": false, "enabled": true
+    },
+    {
+      "id": "journal-chinese-hospital-administration",
+      "name": "中华医院管理杂志 · 当期目录",
+      "kind": "web_list",
+      "config": {
+        "url": "https://cs.medjournals.cn/cn/zhyyglzz/current",
+        "parseMode": "html",
+        "itemSelector": ".search-result-common_list_item",
+        "linkSelector": "h3 a[href*='/article/doi/full/']",
+        "titleSelector": "h3 a[href*='/article/doi/full/']",
+        "allowUrlPrefixes": ["https://cs.medjournals.cn/article/doi/full/"],
+        "detail": { "maxFetches": 8, "publishedAtSelector": "meta[name='citation_publication_date']" },
+        "_aihot": { "initialBackfillLimit": 8 }
+      },
+      "tier": "T1", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["中文", "中国", "医院管理", "护理质控", "患者安全", "质量改进", "官方期刊"],
+      "site_fulltext": false, "syndicate_fulltext": false, "enabled": true
+    },
+    {
+      "id": "journal-chinese-medical-education",
+      "name": "中华医学教育杂志 · 当期目录",
+      "kind": "web_list",
+      "config": {
+        "url": "https://cs.medjournals.cn/cn/zhyxjyzz/current",
+        "parseMode": "html",
+        "itemSelector": ".search-result-common_list_item",
+        "linkSelector": "h3 a[href*='/article/doi/full/']",
+        "titleSelector": "h3 a[href*='/article/doi/full/']",
+        "allowUrlPrefixes": ["https://cs.medjournals.cn/article/doi/full/"],
+        "detail": { "maxFetches": 8, "publishedAtSelector": "meta[name='citation_publication_date']" },
+        "_aihot": { "initialBackfillLimit": 8 }
+      },
+      "tier": "T1", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["中文", "中国", "医学教育", "临床带教", "能力评价", "继续教育", "官方期刊"],
+      "site_fulltext": false, "syndicate_fulltext": false, "enabled": true
+    },
+    {
+      "id": "journal-digital-medicine-health",
+      "name": "数字医学与健康 · 当期目录",
+      "kind": "web_list",
+      "config": {
+        "url": "https://cs.medjournals.cn/cn/szyxyjk/current",
+        "parseMode": "html",
+        "itemSelector": ".search-result-common_list_item",
+        "linkSelector": "h3 a[href*='/article/doi/full/']",
+        "titleSelector": "h3 a[href*='/article/doi/full/']",
+        "allowUrlPrefixes": ["https://cs.medjournals.cn/article/doi/full/"],
+        "detail": { "maxFetches": 8, "publishedAtSelector": "meta[name='citation_publication_date']" },
+        "_aihot": { "initialBackfillLimit": 8 }
+      },
+      "tier": "T1", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["中文", "中国", "医疗AI", "数字医学", "临床决策支持", "智慧医院", "官方期刊"],
+      "site_fulltext": false, "syndicate_fulltext": false, "enabled": true
+    },
+    {
+      "id": "journal-national-medical-china",
+      "name": "中华医学杂志 · 当期目录",
+      "kind": "web_list",
+      "config": {
+        "url": "https://cs.medjournals.cn/cn/zhyxzz/current",
+        "parseMode": "html",
+        "itemSelector": ".search-result-common_list_item",
+        "linkSelector": "h3 a[href*='/article/doi/full/']",
+        "titleSelector": "h3 a[href*='/article/doi/full/']",
+        "allowUrlPrefixes": ["https://cs.medjournals.cn/article/doi/full/"],
+        "detail": { "maxFetches": 8, "publishedAtSelector": "meta[name='citation_publication_date']" },
+        "_aihot": { "initialBackfillLimit": 8 }
+      },
+      "tier": "T1", "participation_mode": "editorial", "interval_minutes": 360,
+      "tags": ["中文", "中国", "综合医学", "临床研究", "指南共识", "官方期刊"],
+      "site_fulltext": false, "syndicate_fulltext": false, "enabled": true
+    },
+    {"id": "official-ndcpa", "name": "国家疾控局 · 通知公告", "kind": "json_list", "config": {"url": "https://www.ndcpa.gov.cn/jbkzzx/c100014/common/list.html", "mode": "html_window_var", "windowVar": "itemObj", "titlePaths": ["aT"], "publishedAtPath": "aPd", "externalIdPath": "id", "urlTemplate": "https://www.ndcpa.gov.cn/jbkzzx/c100014/common/content/content_{id}.html", "publishedAtUtcOffset": "+08:00", "_aihot": {"initialBackfillLimit": 8}}, "tier": "T1", "owner_entity_id": "ndcpa", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["中文", "中国", "公共卫生", "官方公告"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": true},
+    {"id": "official-cdc-respiratory", "name": "中国疾控中心 · 呼吸道哨点监测", "kind": "web_list", "config": {"url": "https://www.chinacdc.cn/jksj/jksj04_14275/", "parseMode": "html", "itemSelector": "dd:has(a[href*=\"/t\"])", "linkSelector": "a", "titleSelector": "a", "publishedAtSelector": "span", "_aihot": {"initialBackfillLimit": 8}, "allowUrlPrefixes": ["https://www.chinacdc.cn/jksj/jksj04_14275/"], "detail": {"maxFetches": 8, "titleSelector": ".containerBox h5", "titleAuthoritative": true}}, "tier": "T1", "owner_entity_id": "china-cdc", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["中文", "中国", "感染", "呼吸", "疾病监测"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": true},
+    {"id": "official-cde", "name": "国家药监局药审中心 · 通知与指导原则（采集访问被拒绝，待授权接入）", "kind": "web_list", "config": {"url": "https://www.cde.org.cn/", "parseMode": "html", "itemSelector": ".news_row:has(a[href*=\"viewInfoCommon\"])", "linkSelector": "a", "titleSelector": "a", "publishedAtSelector": ".row_date", "_aihot": {"initialBackfillLimit": 8}, "allowUrlPrefixes": ["https://www.cde.org.cn/main/news/viewInfoCommon/"]}, "tier": "T1", "owner_entity_id": "cde", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["中文", "中国", "药品监管", "指南"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": false},
+    {"id": "official-nice", "name": "NICE · 指南发布与更新（需 API 授权及密钥，待接入）", "kind": "web_list", "config": {"url": "https://www.nice.org.uk/guidance/published", "parseMode": "html", "itemSelector": "tbody tr", "linkSelector": "td:first-child a", "titleSelector": "td:first-child a", "publishedAtSelector": "td:last-child time", "_aihot": {"initialBackfillLimit": 8}, "allowUrlPrefixes": ["https://www.nice.org.uk/guidance/"], "publishedAtUtcOffset": "+00:00"}, "tier": "T1", "owner_entity_id": "nice", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["英国", "指南"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": false},
+    {"id": "official-cochrane", "name": "Cochrane · 循证动态", "kind": "web_list", "config": {"url": "https://www.cochrane.org/news", "parseMode": "html", "itemSelector": "li:has(p.h6 a[href*=\"/about-us/news/\"])", "linkSelector": "p.h6 a", "titleSelector": "p.h6 a", "publishedAtSelector": ".date", "_aihot": {"initialBackfillLimit": 8}, "allowUrlPrefixes": ["https://www.cochrane.org/about-us/news/"], "publishedAtUtcOffset": "+00:00"}, "tier": "T1", "owner_entity_id": "cochrane", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["循证医学", "系统评价"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": true},
+    {"id": "official-who", "name": "WHO · 最新出版物", "kind": "web_list", "config": {"url": "https://www.who.int/news-room/releases", "parseMode": "html", "itemSelector": ".sf-publications-item__header", "linkSelector": "a", "titleSelector": "h3", "publishedAtSelector": ".sf-publications-item__date", "_aihot": {"initialBackfillLimit": 8}, "allowUrlPrefixes": ["https://www.who.int/publications/i/item/"], "publishedAtUtcOffset": "+00:00"}, "tier": "T1", "owner_entity_id": "who", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["公共卫生", "全球", "官方出版物"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": true},
+    {"id": "official-nhc", "name": "国家卫健委（访问校验，待接入）", "kind": "external", "config": {}, "tier": "T1", "owner_entity_id": "nhc", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["中文", "中国", "官方机构"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": false},
+    {"id": "official-nmpa", "name": "国家药监局（访问校验，待接入）", "kind": "external", "config": {}, "tier": "T1", "owner_entity_id": "nmpa", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["中文", "中国", "官方机构"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": false},
+    {"id": "official-cmde", "name": "医疗器械技术审评中心（访问校验，待接入）", "kind": "external", "config": {}, "tier": "T1", "owner_entity_id": "cmde", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["中文", "中国", "官方机构"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": false},
+    {"id": "official-chictr", "name": "中国临床试验注册中心（访问受限，批量接口待接入）", "kind": "external", "config": {}, "tier": "T1", "owner_entity_id": "chictr", "participation_mode": "editorial", "interval_minutes": 360, "tags": ["中文", "中国", "官方机构"], "site_fulltext": false, "syndicate_fulltext": false, "enabled": false}
   ]
 }

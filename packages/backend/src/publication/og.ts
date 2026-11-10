@@ -9,15 +9,16 @@ import { hasItemPage, publicSourceName } from './rules.ts';
 
 export async function loadItemShare(id: string) {
   const [row] = await sql<{
-    id: string; title: string; summary: string | null; category: CategoryKey | null; selected: boolean;
-    score: number | null; timeline_at: Date; source_name: string; source_mode: string; visibility: string;
-  }[]>`SELECT p.article_id AS id, p.title, p.summary, p.category, p.selected, p.score, p.timeline_at,
+    id: string; title: string; original_title: string | null; summary: string | null; category: CategoryKey | null; selected: boolean;
+    score: number | null; published_at: Date | null; timeline_at: Date; source_name: string; source_mode: string; visibility: string;
+  }[]>`SELECT p.article_id AS id, p.title, p.original_title, p.summary, p.category, p.selected, p.score, p.published_at, p.timeline_at,
       s.name AS source_name, s.participation_mode AS source_mode, p.visibility
     FROM publications p JOIN sources s ON s.id = p.source_id WHERE p.article_id = ${id}`;
   if (!row || !hasItemPage({ visibility: row.visibility, sourceMode: row.source_mode })) return null;
   const summaryOnly = row.visibility === 'summary-only';
-  return { id: row.id, title: row.title, summary: row.summary, category: summaryOnly ? null : row.category, selected: !summaryOnly && row.selected,
+  return { id: row.id, title: row.title, originalTitle: row.original_title, summary: row.summary, category: summaryOnly ? null : row.category, selected: !summaryOnly && row.selected,
     score: summaryOnly || row.score === null ? null : Math.round(Number(row.score)), timelineAt: row.timeline_at.toISOString(),
+    publishedAt: row.published_at?.toISOString() ?? null,
     source: { name: publicSourceName(row.source_name) } };
 }
 

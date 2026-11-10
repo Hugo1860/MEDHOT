@@ -8,8 +8,9 @@ import { DEPLOYMENT } from "@aihot/site";
 import { config } from "@aihot/backend/config";
 import { guardedFetch } from "@aihot/backend/lib/http-fetch";
 
-const deployment = DEPLOYMENT as unknown as { directFetchHosts?: string[] };
+const deployment = DEPLOYMENT as unknown as { directFetchHosts?: string[]; proxyFetchHosts?: string[] };
 const previousHosts = deployment.directFetchHosts;
+const previousProxyHosts = deployment.proxyFetchHosts;
 const previousProxy = config.egressProxyUrl;
 const previousPrivate = config.allowPrivateNetworkFetch;
 const previousDispatcher = getGlobalDispatcher();
@@ -24,8 +25,10 @@ await new Promise<void>(resolve => proxy.listen(0, "127.0.0.1", resolve));
 config.egressProxyUrl = `http://127.0.0.1:${(proxy.address() as { port: number }).port}`;
 config.allowPrivateNetworkFetch = true;
 deployment.directFetchHosts = ["domestic.invalid", "localhost"];
+deployment.proxyFetchHosts = ["forced.invalid.cn"];
 after(async () => {
   deployment.directFetchHosts = previousHosts;
+  deployment.proxyFetchHosts = previousProxyHosts;
   config.egressProxyUrl = previousProxy;
   config.allowPrivateNetworkFetch = previousPrivate;
   setGlobalDispatcher(previousDispatcher);
@@ -38,6 +41,12 @@ test("configured public host uses the direct transport without consulting proxy 
   const before = proxyHits;
   assert.equal((await guardedFetch("https://domestic.invalid/feed", { timeoutMs: 1000 })).text(), "feed");
   assert.equal(proxyHits, before);
+});
+
+test("configured .cn host uses the proxy when local DNS is a Fake-IP resolver", async () => {
+  const before = proxyHits;
+  await assert.rejects(guardedFetch("https://forced.invalid.cn/feed", { timeoutMs: 1000 }));
+  assert.ok(proxyHits > before);
 });
 
 test("a redirect recalculates routing for its destination instead of inheriting the exception", async () => {

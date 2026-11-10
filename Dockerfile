@@ -2,9 +2,11 @@
 # Build arg NPM_REGISTRY switches the npm registry (e.g. https://registry.npmmirror.com in mainland China).
 FROM node:24-trixie-slim AS base
 WORKDIR /app
+ARG APT_MIRROR=
 # pg_dump for the optional database backups (Debian's client matches the PostgreSQL 17 server in compose).
-RUN apt-get update \
- && apt-get install -y --no-install-recommends postgresql-client ca-certificates \
+RUN if [ -n "$APT_MIRROR" ]; then sed -i "s|http://deb.debian.org|$APT_MIRROR|g" /etc/apt/sources.list.d/debian.sources; fi \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends postgresql-client ca-certificates poppler-utils \
  && rm -rf /var/lib/apt/lists/*
 
 FROM base AS build
@@ -17,6 +19,7 @@ COPY packages/backend/package.json packages/backend/
 COPY packages/contracts/package.json packages/contracts/
 COPY industry/package.json industry/
 COPY site/package.json site/
+COPY modules/clinical/package.json modules/clinical/
 RUN npm ci --no-audit --no-fund ${NPM_REGISTRY:+--registry=$NPM_REGISTRY}
 COPY . .
 RUN npm run build -w @aihot/web && npm prune --omit=dev --no-audit --no-fund

@@ -234,7 +234,7 @@ export default function ItemPage() {
 
 /** Phones, while the article loads: what the card showed, in the article's own places. */
 function ItemPreview({ preview }: { preview: FeedItemSummary }) {
-  const [toast, setToast] = useToast();
+  const [posterOpen, setPosterOpen] = useState(false);
   const isX = preview.channel === "x" && !!preview.x;
   // A post reads under its author; one that publishes a long X Article reads like an article, under its headline.
   const isPost = isX && !preview.x!.article;
@@ -279,11 +279,13 @@ function ItemPreview({ preview }: { preview: FeedItemSummary }) {
       <ReaderToolbar
         item={preview}
         originalLabel={isX ? "原推" : "原文"}
-        onShare={async () => {
-          if ((await shareOrCopy(preview)) === "copied") setToast("链接已复制");
-        }}
+        onShare={() => setPosterOpen(true)}
       />
-      <Toast text={toast} />
+      {posterOpen && (
+        <Suspense fallback={null}>
+          <PosterSheet item={preview} open onClose={() => setPosterOpen(false)} />
+        </Suspense>
+      )}
     </div>
   );
 }
@@ -672,14 +674,14 @@ function ItemView({ item, followups }: Loaded) {
         originalUrl={item.links.original}
         originalLabel={isX ? "原推" : "原文"}
         onOutline={showOutline ? () => setOutlineOpen(true) : undefined}
-        onShare={() => void share()}
+        onShare={openPoster}
       />
       {showOutline && <OutlineSheet open={outlineOpen} onClose={() => setOutlineOpen(false)} outline={item.outline} />}
       <ActionsSheet open={actionsOpen} onClose={() => setActionsOpen(false)} rows={phoneActions} />
 
       {posterRequested && (
         <Suspense fallback={null}>
-          <PosterSheet id={item.id} title={item.title} open={posterOpen} onClose={closePoster} />
+          <PosterSheet item={item} open={posterOpen} onClose={closePoster} />
         </Suspense>
       )}
       <Toast text={toast} />

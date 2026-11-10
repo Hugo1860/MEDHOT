@@ -63,9 +63,9 @@ const provider = await stub((_hit, req) => {
   }
   if (step === "understand") {
     if (marker === "SENSITIVE") return new Reply(400, { contentFilter: [{ level: 1, role: "user" }], error: { code: "1301", message: "系统检测到输入或生成内容可能包含不安全或敏感内容" } });
-    return answer({ itemType: "model_release", authorRole: "principal", tags: ["模型发布", "开源", "Agent", "不存在的标签"], editorialJudgment: `理由 ${marker}`, titleZh: `理解标题 ${marker}`, summaryZh: `理解摘要 ${marker}。第二句补充一个关键数字。` });
+    return answer({ itemType: "clinical_research", authorRole: "principal", tags: ["临床研究", "心血管", "不存在的标签"], editorialJudgment: `理由 ${marker}`, titleZh: `理解标题 ${marker}`, summaryZh: `理解摘要 ${marker}。第二句补充一个关键数字。` });
   }
-  if (step === "structure") return answer({ category: "ai-models", tags: ["模型发布", "推理"], subjects: ["anthropic", "unknown-co"], scope: "single", fact: { title: `事实 ${marker}`, subject: "某公司", action: "发布", object: "模型", occurredAt: null, evidence: "a lab released a model", conditions: [] } });
+  if (step === "structure") return answer({ category: "research", tags: ["临床研究", "心血管"], subjects: ["nejm", "unknown-source"], scope: "single", fact: { title: `事实 ${marker}`, subject: "研究团队", action: "发布", object: "临床研究", occurredAt: null, evidence: "a lab released a model", conditions: [] } });
   return answer(`title_zh: 翻译标题 ${marker}\nsummary_zh: 翻译摘要 ${marker}。第二句补充影响。`);
 });
 pointModels(provider.url);
@@ -101,11 +101,11 @@ test("a selected item: prefilter, two scores, the content understanding and the 
   assert.deepEqual([res!.output!.selected, res!.output!.score], [true, T1 + 1], `${T1 + 3} + ${T1 - 1} >= 2 × ${T1}; the mean is shown`);
   assert.deepEqual(calls("CLEAR").sort(), ["prefilter", "score", "score", "structure", "understand"]);
   const r = await row(id);
-  assert.deepEqual([r.title_zh, r.reason_zh, r.category, r.receipt_ids.length], ["理解标题 CLEAR", "理由 CLEAR", "ai-models", 5]);
+  assert.deepEqual([r.title_zh, r.reason_zh, r.category, r.receipt_ids.length], ["理解标题 CLEAR", "理由 CLEAR", "research", 5]);
   // Failure case: the writer's independent labels contradict the structural category.
-  assert.deepEqual(r.tags, ["模型发布", "推理", "Anthropic"], "category and tags come from the same structural judgement, plus the verified subject tag");
-  assert.deepEqual(r.subjects, ["anthropic"]);
-  assert.deepEqual([r.output.writer, r.output.itemType, r.output.prefilter.label, r.output.fact.title], ["understand", "model_release", "PASS", "事实 CLEAR"]);
+  assert.deepEqual(r.tags, ["临床研究", "心血管", "NEJM"], "category and tags come from the same structural judgement, plus the verified subject tag");
+  assert.deepEqual(r.subjects, ["nejm"]);
+  assert.deepEqual([r.output.writer, r.output.itemType, r.output.prefilter.label, r.output.fact.title], ["understand", "clinical_research", "PASS", "事实 CLEAR"]);
   assert.equal(r.output.scope, "single");
   assert.equal(r.output.fact.evidence, "a lab released a model");
   const score = requests.find((q) => q.marker === "CLEAR" && q.step === "score")!;
@@ -157,7 +157,7 @@ test("structure retains grounded conditions, rejects invented or unseen quotes, 
     { text: "无限免费", quote: "Unlimited free access for everyone." },
     { text: "不在模型输入里的句子", quote: "This late detail was not sent." },
   ] };
-  const base = { category: "ai-models", tags: [], subjects: [], fact: frame };
+  const base = { category: "research", tags: [], subjects: [], fact: frame };
   const out = normalizeStructure(StructureSchema.parse(base), input);
   assert.ok(buildMaterial(input).includes("Only available in the US."), "a condition after the old 7000-character cutoff reaches the model");
   assert.ok(buildMaterial(input).includes("后文未提供"));
@@ -187,7 +187,7 @@ test("a near-selected item is written like a selected one; below the floor it is
   const low = await analyzeArticle(lowId);
   assert.deepEqual([low!.output!.selected, low!.output!.titleZh, low!.output!.reasonZh], [false, "翻译标题 LOW", null]);
   assert.deepEqual(calls("LOW").sort(), ["prefilter", "score", "score", "structure", "summarize"]);
-  assert.deepEqual((await row(lowId)).tags, ["模型发布", "推理", "Anthropic"], "structure tags");
+  assert.deepEqual((await row(lowId)).tags, ["临床研究", "心血管", "NEJM"], "structure tags");
 });
 
 test("the prefilter's BLOCK stops everything; UNKNOWN with material goes on like PASS", async () => {
@@ -238,9 +238,9 @@ test("a short post in Chinese is its own copy; a content-filter refusal is trans
 });
 
 test("guards: a company the input does not name is not written in; long summaries are cut at sentences", () => {
-  const input = { title: "某实验室发布新模型", text: "某实验室发布了一个新模型，参数规模和价格都有说明。", sourceKind: "rss" };
-  const guarded = enforceIdentity(input, { titleZh: "OpenAI 发布新模型", summaryZh: "某实验室发布新模型。" });
-  assert.deepEqual([guarded.titleZh, guarded.summaryZh, guarded.identityGuard.outcome], ["某实验室发布新模型", "某实验室发布新模型。", "fallback"]);
+  const input = { title: "某研究团队发布临床研究", text: "某研究团队发布了临床研究，主要结果和适用范围均有说明。", sourceKind: "rss" };
+  const guarded = enforceIdentity(input, { titleZh: "FDA 发布临床研究", summaryZh: "某研究团队发布临床研究。" });
+  assert.deepEqual([guarded.titleZh, guarded.summaryZh, guarded.identityGuard.outcome], ["某研究团队发布临床研究", "某研究团队发布临床研究。", "fallback"]);
   // The identity lexicon: a Chinese rendering of a company the input names in English is no invention.
   const alibaba = { title: "Alibaba ships a new coding model", text: "Alibaba released a coding model with pricing details.", sourceKind: "rss" };
   assert.equal(enforceIdentity(alibaba, { titleZh: "阿里巴巴发布编程模型", summaryZh: "阿里巴巴发布了编程模型并公布价格。" }).identityGuard.outcome, "pass");
@@ -257,7 +257,7 @@ test("guards: a company the input does not name is not written in; long summarie
   assert.equal(parseTranslateOutput("title_zh: 标题\nbody_zh: 我们懂你。\n\n来源：X：PixVerse (@PixVerse)").bodyZh, "我们懂你。", "a repeated prompt line is dropped");
 });
 
-test("a source class raises its tier's threshold to the class floor and never lowers one", () => {
+test("a source class raises its tier's threshold to the class floor and never lowers one", { skip: !CLASS && "this site has no calibrated source classes" }, () => {
   assert.ok(CLASS && CLASS_FLOOR - 1 >= T1, "the cases need a pack class whose floor lies above the official threshold and below the media one");
   assert.equal(selectionThreshold({ tier: "T1", selectionClass: null }), T1);
   assert.equal(selectionThreshold({ tier: "T1", selectionClass: CLASS }), CLASS_FLOOR);
@@ -265,7 +265,7 @@ test("a source class raises its tier's threshold to the class floor and never lo
   assert.equal(selectionThreshold({ tier: "EXCLUDE_MP", selectionClass: CLASS }), null, "a tier without a threshold stays out of 精选");
 });
 
-test("after the admin gives a source a class, analysing again holds the paid scores against the class floor", async () => {
+test("after the admin gives a source a class, analysing again holds the paid scores against the class floor", { skip: !CLASS && "this site has no calibrated source classes" }, async () => {
   // Scores that select from an ordinary official source and stay under the class floor.
   const id = await article("ECOSYS", { sourceId: CLASSED_SOURCE });
   const first = await analyzeArticle(id);

@@ -16,11 +16,13 @@ export const sheetChoice = (on: boolean) => `flex h-12 items-center justify-betw
 /** The tick that ends the choice in use. */
 export const ChoiceTick = () => <IconCheck size={19} strokeWidth={2.2} />;
 
-export function Sheet({ open, onClose, title, children, label, centered = false }: {
+export function Sheet({ open, onClose, title, children, label, centered = false, immersive = false }: {
   open: boolean;
   onClose: () => void;
   /** From sm up, a dialog in the middle of the screen instead (the share poster). */
   centered?: boolean;
+  /** A transparent, centred panel over a darker backdrop (share-poster preview). */
+  immersive?: boolean;
   title?: ReactNode;
   children: ReactNode;
   /** Accessible name when there is no visible title. */
@@ -130,8 +132,8 @@ export function Sheet({ open, onClose, title, children, label, centered = false 
   if (typeof document === "undefined") return null;
   return createPortal(
     <Presence show={open} enter="anim-fade-in" exit="anim-fade-out" duration={220}>
-      <div className={`fixed inset-0 z-[70] flex flex-col justify-end ${centered ? "sm:items-center sm:justify-center sm:p-6" : ""}`}>
-        <button type="button" aria-label="关闭" tabIndex={-1} onClick={onClose} className="absolute inset-0 cursor-default bg-[rgba(8,14,15,0.42)]" />
+      <div className={`fixed inset-0 z-[70] flex flex-col ${immersive ? "items-center justify-center px-3 py-[max(12px,env(safe-area-inset-top))]" : `justify-end ${centered ? "sm:items-center sm:justify-center sm:p-6" : ""}`}`}>
+        <button type="button" aria-label="关闭" tabIndex={-1} onClick={onClose} className={`absolute inset-0 cursor-default ${immersive ? "bg-[rgba(8,12,18,0.78)] backdrop-blur-[2px]" : "bg-[rgba(8,14,15,0.42)]"}`} />
         <div
           ref={panel}
           role="dialog"
@@ -139,10 +141,10 @@ export function Sheet({ open, onClose, title, children, label, centered = false 
           aria-labelledby={title ? titleId : undefined}
           aria-label={title ? undefined : label}
           tabIndex={-1}
-          className={`sheet-panel anim-sheet-in relative mx-auto flex max-h-[88dvh] w-full max-w-[640px] flex-col rounded-t-sheet bg-surface shadow-[0_-12px_40px_rgba(0,0,0,0.16)] outline-none ${centered ? "sm:w-auto sm:min-w-[400px] sm:rounded-sheet sm:pb-2" : ""}`}
+          className={`sheet-panel anim-sheet-in relative mx-auto flex w-full flex-col outline-none ${immersive ? "max-h-[calc(100dvh-24px)] max-w-[440px] bg-transparent shadow-none" : `max-h-[88dvh] max-w-[640px] rounded-t-sheet bg-surface shadow-[0_-12px_40px_rgba(0,0,0,0.16)] ${centered ? "sm:w-auto sm:min-w-[400px] sm:rounded-sheet sm:pb-2" : ""}`}`}
         >
           <div ref={handle} className="touch-none select-none">
-            <span aria-hidden="true" className={`mx-auto mt-[7px] block h-[5px] w-9 rounded-full bg-line-strong ${centered ? "sm:invisible" : ""}`} />
+            {!immersive && <span aria-hidden="true" className={`mx-auto mt-[7px] block h-[5px] w-9 rounded-full bg-line-strong ${centered ? "sm:invisible" : ""}`} />}
             {title && (
               <div className="flex min-h-12 items-center gap-3 pl-5 pr-2">
                 <h2 id={titleId} className="min-w-0 flex-1 text-[17px] font-bold leading-snug text-ink">
@@ -156,7 +158,7 @@ export function Sheet({ open, onClose, title, children, label, centered = false 
               </div>
             )}
           </div>
-          <div ref={body} className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-[max(16px,env(safe-area-inset-bottom))]">
+          <div ref={body} className={`min-h-0 flex-1 overflow-y-auto overscroll-contain ${immersive ? "pb-[max(4px,env(safe-area-inset-bottom))]" : "pb-[max(16px,env(safe-area-inset-bottom))]"}`}>
             {children}
           </div>
         </div>

@@ -10,7 +10,7 @@ import { findTopic, TOPIC_GROUPS, TOPICS } from "@aihot/backend/publication/topi
 import { loadStoryDetail, resolveStory } from "@aihot/backend/publication/stories";
 import { ogEtag, renderOg, type OgCard } from "@aihot/backend/media/og";
 import { posterEtag, renderPoster, type Poster } from "@aihot/backend/media/poster";
-import { CARDS, ITEM_COPY, REPORTS, subjectAfter, withSubject } from "@aihot/site";
+import { CARDS, ITEM_COPY, REPORTS, SITE, subjectAfter, withSubject } from "@aihot/site";
 import { config } from "@aihot/backend/config";
 
 /** The pages' share cards: the site's texts, and the topic count of the topic list. */
@@ -66,13 +66,17 @@ export function registerOg(app: FastifyInstance) {
       url: `${config.siteUrl}/items/${d.id}`,
       kicker: d.category ? CATEGORY_LABELS[d.category] : withSubject("动态"),
       title: d.title,
+      originalTitle: d.originalTitle,
       summary: d.summary,
       source: d.source.name,
-      date: beijingDate(d.timelineAt),
+      date: beijingDate(d.publishedAt ?? d.timelineAt),
       score: d.selected && ITEM_COPY.showScore ? d.score : null,
     };
     const tag = `"poster-${posterEtag(poster)}"`;
     reply.header("ETag", tag).header("Cache-Control", CONTENT_IMAGE_CACHE);
+    if ((req.query as { download?: string }).download === "1") {
+      reply.header("Content-Disposition", `attachment; filename="${SITE.mcpPrefix}-${d.id}.png"`);
+    }
     if (String(req.headers["if-none-match"] ?? "").split(",").some((t) => t.trim().replace(/^W\//, "") === tag)) return reply.code(304).send();
     return reply.type("image/png").send((await renderPoster(poster)).png);
   });

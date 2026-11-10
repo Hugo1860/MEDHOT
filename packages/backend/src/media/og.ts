@@ -71,16 +71,24 @@ function aspect(svg: string): number {
 const wordmarks = new Map<string, Promise<{ src: string; aspect: number } | null>>();
 
 /**
- * A wordmark of the site (site/brand/<file>, e.g. wordmark-dark.svg for the dark cards) as an
- * image of the given height; null when the pack has none, and the card sets the name in type instead.
+ * A brand image of the site (site/brand/<file>, e.g. wordmark-dark.svg or icon.png) at the given
+ * height; null when the pack has none, and the card sets the name in type instead.
  */
 export async function brandMark(file: string, height: number): Promise<Node | null> {
   let mark = wordmarks.get(file);
   if (!mark) {
-    mark = readFile(path.join(REPO_ROOT, "site/brand", file), "utf8").then(
-      (svg) => ({ src: `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`, aspect: aspect(svg) }),
-      () => null,
-    );
+    const target = path.join(REPO_ROOT, "site/brand", file);
+    mark = path.extname(file).toLowerCase() === ".svg"
+      ? readFile(target, "utf8").then(
+          (svg) => ({ src: `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`, aspect: aspect(svg) }),
+          () => null,
+        )
+      : readFile(target).then(async (image) => {
+          const meta = await sharp(image).metadata();
+          if (!meta.width || !meta.height) return null;
+          const mime = path.extname(file).toLowerCase() === ".webp" ? "image/webp" : path.extname(file).toLowerCase() === ".jpg" || path.extname(file).toLowerCase() === ".jpeg" ? "image/jpeg" : "image/png";
+          return { src: `data:${mime};base64,${image.toString("base64")}`, aspect: meta.width / meta.height };
+        }, () => null);
     wordmarks.set(file, mark);
   }
   const found = await mark;

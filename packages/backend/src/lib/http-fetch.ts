@@ -37,7 +37,9 @@ function hostOf(url: URL): string {
 function proxied(url: URL, route: EgressRoute, privateHosts: readonly string[]): boolean {
   if (route !== "egress" || !config.egressProxyUrl) return false;
   const host = hostOf(url);
-  return net.isIP(host) === 0 && !privateHosts.includes(host) && !host.endsWith(".cn") && !host.endsWith(".local") && !DEPLOYMENT.directFetchHosts.includes(host);
+  if (net.isIP(host) !== 0 || privateHosts.includes(host) || host.endsWith(".local")) return false;
+  if ((DEPLOYMENT as { proxyFetchHosts?: string[] }).proxyFetchHosts?.includes(host)) return true;
+  return !host.endsWith(".cn") && !DEPLOYMENT.directFetchHosts.includes(host);
 }
 
 // Per-edition limits are optional; missing hosts keep the runtime default (normally 16 KiB).

@@ -486,6 +486,18 @@ test("a cached share-image validator never outlives the selected verdict or a wi
   for (const [path, etag] of paths) assert.equal((await get(path, { "if-none-match": etag })).status, 404, "cached ETags never bypass current visibility");
 });
 
+test("a poster download asks supporting browsers to save an attachment", async () => {
+  const id = await article();
+  await sql`UPDATE analyses SET category = 'research' WHERE article_id = ${id}`;
+  await publishArticle(id, released());
+  const inline = await app.inject({ method: "GET", url: `/og/posters/${id}.png` });
+  const download = await app.inject({ method: "GET", url: `/og/posters/${id}.png?download=1` });
+  assert.equal(inline.headers["content-disposition"], undefined);
+  assert.equal(download.statusCode, 200);
+  assert.match(String(download.headers["content-disposition"]), new RegExp(`^attachment; filename="[^\"]+-${id}\\.png"$`));
+  assert.equal(download.headers.etag, inline.headers.etag, "download changes disposition, not poster bytes");
+});
+
 // Restricting a selected item to a neutral summary must also remove its selected badge, score,
 // classification and story links from the detail and both share-image projections.
 test("summary-only detail and sharing keep neutral metadata without a selected verdict", async () => {

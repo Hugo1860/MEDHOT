@@ -1,9 +1,10 @@
 // Topics: stable slugs in three groups (companies, directions, content forms), defined by the industry
 // pack (industry/topics.json) and read from there when the process starts. Which reports a topic takes
-// is one SQL predicate, `membership`: a direction or a form takes its tags; a company takes the reports
-// it is a subject of, but not those that only mention it — among several subject companies, its name must
-// appear in the Chinese or the original title. Lists and counts read the selected set one report per
-// fact, as v1 and RSS do.
+// is one SQL predicate, `membership`: a direction or a form takes its tags; an institution or journal
+// takes reports from its configured first-party sources and, when it has an entity id, reports where it
+// is the subject. Subject matching still rejects reports that only mention it — among several subjects,
+// its name must appear in the Chinese or original title. Lists and counts read the selected set one
+// report per fact, as v1 and RSS do.
 import type { CategoryKey } from "@aihot/contracts/taxonomy";
 import type {
   Brand, TopicGroup, TopicGroupKey, TopicLink, TopicPage, TopicSummary, TopicsResponse,
@@ -26,6 +27,8 @@ export interface Topic {
   definition: string;
   /** Companies: the subject id (industry/taxonomy.ts ENTITIES). */
   entityId: string | null;
+  /** Institutions and journals: first-party sources whose own reports belong to the topic. */
+  sourceIds: string[];
   /** Tags that put a report in the topic: a company's subject tag, a direction's or a form's tags. */
   tags: string[];
   /** Companies: a title naming the company by any of its names (a PostgreSQL regular expression). */
@@ -37,7 +40,7 @@ export interface Topic {
 interface TopicFile {
   groups: TopicGroup[];
   topics: Array<{
-    slug: string; name: string; group: TopicGroupKey; entityId?: string; aliases?: string[]; tags?: string[]; definition: string;
+    slug: string; name: string; group: TopicGroupKey; entityId?: string; sourceIds?: string[]; aliases?: string[]; tags?: string[]; definition: string;
   }>;
 }
 
@@ -61,9 +64,10 @@ export const TOPICS: Topic[] = file.topics.map((t) => ({
   group: t.group,
   definition: t.definition,
   entityId: t.entityId ?? null,
+  sourceIds: t.sourceIds ?? [],
   tags: t.entityId ? [`entity:${t.entityId}`] : (t.tags ?? []),
   pattern: t.entityId ? titlePattern(t.name, t.entityId) : null,
-  aliases: t.entityId ? [t.slug, t.name, ...nameParts(t.name), ...(t.aliases ?? [])] : [],
+  aliases: t.entityId || t.sourceIds?.length ? [t.slug, t.name, ...nameParts(t.name), ...(t.aliases ?? [])] : [],
 }));
 
 const BY_SLUG = new Map(TOPICS.map((t, position) => [t.slug, { topic: t, position }]));
@@ -98,9 +102,10 @@ export function topicBrowseLinks() {
 }
 
 /** One membership rule for topic discovery and a single topic's page and count. */
-function topicMatch(tags: ReturnType<typeof sql>, pattern: ReturnType<typeof sql>) {
-  return sql`p.tags && ${tags} AND (${pattern} IS NULL OR p.title ~* ${pattern} OR coalesce(p.original_title, '') ~* ${pattern}
-    OR (SELECT count(*) FROM unnest(p.tags) AS e(tag) WHERE e.tag LIKE 'entity:%') = 1)`;
+function topicMatch(tags: ReturnType<typeof sql>, pattern: ReturnType<typeof sql>, sourceIds: ReturnType<typeof sql>) {
+  return sql`(p.source_id = ANY(${sourceIds}) OR (p.tags && ${tags} AND (${pattern} IS NULL OR p.title ~* ${pattern}
+    OR coalesce(p.original_title, '') ~* ${pattern}
+    OR (SELECT count(*) FROM unnest(p.tags) AS e(tag) WHERE e.tag LIKE 'entity:%') = 1)))`;
 }
 
 /**
@@ -108,17 +113,17 @@ function topicMatch(tags: ReturnType<typeof sql>, pattern: ReturnType<typeof sql
  * title names it or it is the report's only subject company.
  */
 export function topicMembership(topics: Topic[] = TOPICS) {
-  const rows = topics.map((t) => ({ slug: t.slug, tags: t.tags, pattern: t.pattern, position: position(t.slug) }));
+  const rows = topics.map((t) => ({ slug: t.slug, tags: t.tags, pattern: t.pattern, source_ids: t.sourceIds, position: position(t.slug) }));
   return sql`ARRAY(
-    SELECT t.slug FROM jsonb_to_recordset(${sql.json(rows)}::jsonb) AS t(slug text, tags text[], pattern text, position int)
-    WHERE ${topicMatch(sql`t.tags`, sql`t.pattern`)}
+    SELECT t.slug FROM jsonb_to_recordset(${sql.json(rows)}::jsonb) AS t(slug text, tags text[], pattern text, source_ids text[], position int)
+    WHERE ${topicMatch(sql`t.tags`, sql`t.pattern`, sql`t.source_ids`)}
     ORDER BY t.position)`;
 }
 
 /** Report `p` is in topic `t`; the tag overlap comes first, for the tags index. */
 function inTopic(t: Topic) {
   const pattern: ReturnType<typeof sql> = t.pattern === null ? sql`NULL::text` : sql`${t.pattern}::text`;
-  return topicMatch(sql`${t.tags}::text[]`, pattern);
+  return topicMatch(sql`${t.tags}::text[]`, pattern, sql`${t.sourceIds}::text[]`);
 }
 
 // ---------------------------------------------------------------------------------------------------

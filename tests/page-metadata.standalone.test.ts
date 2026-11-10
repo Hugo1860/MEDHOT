@@ -28,7 +28,7 @@ import { dateLine } from "../apps/web/app/features/report/format.ts";
 import { startWebServer, type WebServer } from "../apps/web/tests/web-server.ts";
 
 const at = "2026-10-04T08:00:00.000Z";
-const item: FeedItemSummary = { id: "metadata-fixture", title: "可核实的测试报道", summary: "报道摘要", reason: null, source: { name: "Fixture" }, publishedAt: at, timelineAt: at, category: "ai-models", tags: [], score: 80, selected: true, channel: "news", x: null };
+const item: FeedItemSummary = { id: "metadata-fixture", title: "可核实的测试报道", summary: "报道摘要", reason: null, source: { name: "Fixture" }, publishedAt: at, timelineAt: at, category: "research", tags: [], score: 80, selected: true, channel: "news", x: null };
 const detail: SiteItemDetail = { ...item, x: null, originalTitle: null, links: { original: "https://example.org/report" }, discoveredAt: at, story: null, readingMode: "full", author: null, body: { zh: "<p>可核实的测试正文。</p>", original: null, zhKind: "original", complete: true }, outline: [], relatedStories: [], topics: [], tagTopics: {}, daily: null, indexable: true, googleNoindex: false, markdownAvailable: true, group: null, hasTranslation: false, bodyLanguage: "zh", mentions: [] };
 /** Article pages by id: the fixture, one kept from Google only, one kept from every engine. */
 const details: Record<string, SiteItemDetail> = {
@@ -85,7 +85,7 @@ function structured($: cheerio.CheerioAPI): Array<Record<string, unknown>> {
 }
 
 test("filtered feeds keep their exact content address but leave indexing to the public landing pages", async () => {
-  for (const base of ["/", "/all"]) for (const query of ["channel=news", "category=ai-models", "tag=Agent", "channel=x&category=paper&tag=Agent"]) {
+  for (const base of ["/", "/all"]) for (const query of ["channel=news", "category=research", "tag=%E6%8A%A4%E7%90%86", "channel=x&category=guideline&tag=%E6%8A%A4%E7%90%86"]) {
     const $ = await page(`${base}?${query}&utm_source=fixture&anchorAt=old&deep=1`);
     assert.equal($("meta[name=robots]").attr("content"), "noindex, follow", `${base}?${query}`);
     assert.equal($("link[rel=canonical]").attr("href"), `${web.origin}${base}?${query}`);

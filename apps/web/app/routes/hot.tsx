@@ -252,6 +252,9 @@ export default function HotPage() {
   const [lead, ...rest] = hot.entries;
   const runners = rest.slice(0, 2);
   const others = rest.slice(2);
+  const overview = hot.entries.length
+    ? `过去 ${hot.windowHours} 小时，${withSubject("圈")}讨论最多的 ${hot.entries.length} 件事`
+    : `过去 ${hot.windowHours} 小时，多个独立来源共同关注的事件`;
   return (
     <div className="pb-10">
       <PhoneBar
@@ -259,7 +262,7 @@ export default function HotPage() {
         large
         sub={
           <>
-            过去 {hot.windowHours}{`${subjectAfter(" 小时", "圈")}讨论最多的 `}{hot.entries.length || 10} 件事
+            {overview}
             {hot.computedAt && (
               <>
                 {" · "}
@@ -284,7 +287,7 @@ export default function HotPage() {
             实时热度
           </div>
           <h1 className="mt-1.5 text-[24px] font-bold leading-[1.3] tracking-[-0.01em] text-ink lg:text-[26px]">{withSubject("热点榜")}</h1>
-          <p className="mt-1.5 text-[13.5px] text-ink-3">过去 {hot.windowHours}{` 小时，${withSubject("圈")}讨论最多的 `}{hot.entries.length || 10} 件事</p>
+          <p className="mt-1.5 text-[13.5px] text-ink-3">{overview}</p>
         </div>
         {hot.computedAt && (
           <p className="text-[12px] text-ink-4">
@@ -295,7 +298,14 @@ export default function HotPage() {
 
       {!lead ? (
         <div className="card rounded-sheet">
-          <EmptyState title="暂时没有热点">还没有足够多来源共同讨论的事件。</EmptyState>
+          <EmptyState title="暂无达到上榜条件的事件">
+            <span className="block">同一事件在过去 {hot.windowHours} 小时内，至少有 2 个独立来源报道或讨论，才会进入热点榜。</span>
+            <span className="mt-2 block">可以先查看精选和全部动态中的资料。</span>
+            <span className="mt-4 flex justify-center gap-5">
+              <IntentLink to="/" className="text-accent underline underline-offset-4">查看精选</IntentLink>
+              <IntentLink to="/all" className="text-accent underline underline-offset-4">查看全部动态</IntentLink>
+            </span>
+          </EmptyState>
         </div>
       ) : (
         <>

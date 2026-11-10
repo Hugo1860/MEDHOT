@@ -22,10 +22,10 @@ import { titled } from "./lib/seo";
 import { webModules } from "./site-modules";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "icon", href: "/favicon.ico", sizes: "any" },
-  { rel: "icon", type: "image/png", href: "/icon.png" },
-  { rel: "apple-touch-icon", href: "/apple-icon.png" },
-  { rel: "manifest", href: "/manifest.webmanifest" },
+  { rel: "icon", href: `/favicon.ico?v=${SITE.brandVersion}`, sizes: "any" },
+  { rel: "icon", type: "image/png", href: `/icon.png?v=${SITE.brandVersion}` },
+  { rel: "apple-touch-icon", href: `/apple-icon.png?v=${SITE.brandVersion}` },
+  { rel: "manifest", href: `/manifest.webmanifest?v=${SITE.brandVersion}` },
   { rel: "alternate", type: "application/rss+xml", title: `${SITE.name} — 精选`, href: "/feed.xml" },
 ];
 

@@ -1,12 +1,13 @@
 import { useLoaderData } from "react-router";
 import type { Route } from "./+types/report-latest";
 import { REPORT_NAMES, reportDateLabel, type ReportLatestPage } from "@aihot/contracts/site";
-import { REPORTS, SEO_TITLES, subjectAfter, withSubject } from "@aihot/site";
+import { EDITION_WHEN, REPORTS, SEO_TITLES, subjectAfter, withSubject } from "@aihot/site";
 import { cachedPage, loadOr404 } from "../lib/api.server";
 import { pageReuse } from "../lib/page-reuse";
 import { pageMeta, reportDescription, reportLd } from "../lib/seo";
 import { beijingDate } from "@aihot/contracts/time";
 import { EmptyState } from "../components/ui/Page";
+import { IntentLink } from "../components/ui/IntentLink";
 import { ReportLayout } from "../features/report/ReportLayout";
 import { ReportPaper, reportOutline } from "../features/report/ReportPaper";
 import { KIND_PATH, feedLink, kindFromPath } from "../features/report/format";
@@ -43,7 +44,20 @@ export default function ReportLatestPage() {
   const { kind, report, index, today } = useLoaderData<typeof loader>();
   return (
     <ReportLayout kind={kind} index={index} current={report?.key ?? null} today={today} outline={report ? reportOutline(report) : []}>
-      {report ? <ReportPaper report={report} index={index} /> : <EmptyState title={subjectAfter("还没有发布", REPORT_NAMES[kind])}>第一期发布后会出现在这里。</EmptyState>}
+      {report ? <ReportPaper report={report} index={index} /> : (
+        <EmptyState title={subjectAfter("还没有发布", REPORT_NAMES[kind])}>
+          <span className="block">出刊时间：北京时间{EDITION_WHEN[kind]}。</span>
+          <span className="mt-2 block">
+            {kind === "daily"
+              ? "日报汇总出刊前 24 小时的新资料，历史补录不计入当日日报。有符合条件的新资料后，首期会按出刊时间发布。"
+              : "周报和月报由对应时段已发布的日报汇编；有可汇总内容后，首期会按出刊时间发布。"}
+          </span>
+          <span className="mt-4 flex justify-center gap-5">
+            <IntentLink to="/" className="text-accent underline underline-offset-4">先看精选</IntentLink>
+            <IntentLink to="/all" className="text-accent underline underline-offset-4">查看全部动态</IntentLink>
+          </span>
+        </EmptyState>
+      )}
     </ReportLayout>
   );
 }

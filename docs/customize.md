@@ -31,7 +31,7 @@
 - **和提示词同步**：改了 `CATEGORIES`、标签词表或 `ITEM_TYPES`，要同步改 `industry/prompts/structure.md`（归类原则与标签规则）、`content-understanding.md`（内容类型枚举）和 `selection-score.md`（各内容类型的五维权重表）。
 - **不需要防张冠李戴时可清空**：`IDENTITY_LEXICON`、`PUBLISHER_DOMAINS`、`IDENTITY_CONTEXT_ALIASES` 用来保证标题摘要里提到的公司在原文里出现过；你的行业不需要这项检查时设为空数组 `[]`。
 - **`industry/topics.json`**（主题目录 `/topics`）：站点启动时读取，改完重新构建（`docker compose up -d --build`）生效。分 `company`（公司与机构）、`field`（方向）、`genre`（内容形态）三组，`slug` 上线后不要改：
-  - `company` 主题用 `entityId`（`ENTITIES` 的 id）收以这家公司为主体的报道；一篇报道的主体有几家公司时，标题里点了它的名才算。可选 `aliases`：搜索框里只搜这个词，也能找出这家公司的报道。
+  - `company` 主题可用 `entityId`（`ENTITIES` 的 id）收以这家公司或机构为主体的报道；一篇报道的主体有几个机构时，标题里点了它的名才算。也可配置 `sourceIds`，把这些一手信源自己发布的内容归入对应机构或期刊主题；两者同时配置时取并集。可选 `aliases`：搜索框里只搜这个词，也能找出该主题的报道。
   - `field` 和 `genre` 主题用 `tags` 收打了这些标签的报道。
 
 ## 3. 信源：`industry/sources.json`
@@ -106,7 +106,7 @@
 ## 7. 页面文案：`site/pages/`、`site/public/`、`site/changelog.json`
 
 - `pages/terms.md`、`pages/privacy.md`：使用规则和隐私说明。**现在是模板**，上线前按你的实际情况改写，必要时请专业人士看一下。
-- `public/`：网站根目录上的四个固定文件，替换占位符后发布：`robots.txt`、`manifest.webmanifest`（装到手机桌面时的名字和图标）、`openapi-v1.json`（公开 API 的说明），以及可选的 `.well-known/security.txt`（安全问题的联系方式）。只发布这四个文件，放进去的其他文件不会出现在网站上；没有的文件访问时是 404。文件里可以写这些占位符：`{{siteName}}`、`{{siteUrl}}`、`{{description}}`、`{{tagline}}`、`{{locale}}`，出刊时间 `{{dailyTime}}`、`{{weeklyTime}}`、`{{monthlyTime}}`，公开接口版本 `{{version}}`，逗号分隔的公开分类 `{{categoryList}}`；JSON 文件里 `enum` 或 `examples` 列表中的 `"{{categories}}"` 会换成公开分类的 key 列表。
+- `public/`：网站根目录上的四个固定文件，替换占位符后发布：`robots.txt`、`manifest.webmanifest`（装到手机桌面时的名字和图标）、`openapi-v1.json`（公开 API 的说明），以及可选的 `.well-known/security.txt`（安全问题的联系方式）。只发布这四个文件，放进去的其他文件不会出现在网站上；没有的文件访问时是 404。文件里可以写这些占位符：`{{siteName}}`、`{{siteUrl}}`、`{{description}}`、`{{tagline}}`、`{{brandVersion}}`、`{{locale}}`，出刊时间 `{{dailyTime}}`、`{{weeklyTime}}`、`{{monthlyTime}}`，公开接口版本 `{{version}}`，逗号分隔的公开分类 `{{categoryList}}`；JSON 文件里 `enum` 或 `examples` 列表中的 `"{{categories}}"` 会换成公开分类的 key 列表。更换站点图标时同步递增`site.ts`里的`brandVersion`，让浏览器和桌面安装图标绕过旧缓存。
 - `changelog.json`：更新日志。自带一条“网站上线”示例，上线前把它的 `date`、`time` 和 `latestVersion` 改成你的上线时间；示例正文里的框架署名（“用 AIHOT 开源框架搭起了这个站”）同样可留可删。新条目写在最前面，把 `latestVersion` 改成它的日期和时间。`kind` 是“更新”“优化”“公告”“下线”之一；要读者一定看到的加 `"urgent": true`（红色，标“重要”）。
 
 ## 8. 模型和部署
